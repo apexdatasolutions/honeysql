@@ -192,7 +192,7 @@
   [x]
   (try
     (some-> (namespace x) (str/replace "-" "_"))
-    (catch #?(:clj Throwable :cljs :default) t
+    (catch #?(:clj Throwable :cljr Exception :cljs :default) t
       (throw (ex-info (str "expected symbol, found: "
                            (type x))
                       {:symbol x
@@ -203,7 +203,7 @@
   [x]
   (try
     (str/replace (name x) "-" "_")
-    (catch #?(:clj Throwable :cljs :default) t
+    (catch #?(:clj Throwable :cljr Exception :cljs :default) t
       (throw (ex-info (str "expected symbol, found: "
                            (type x))
                       {:symbol x
@@ -278,7 +278,7 @@
             ident-l (str/lower-case ident)]
         (binding [*quoted* (when-not (contains? #{"array"} ident-l) *quoted*)]
           (format-entity (keyword ident))))
-      (-> n (dehyphen) (upper-case)))))
+      (-> n (dehyphen) (str/upper-case)))))
 
 (defn- sym->kw
   "Given a symbol, produce a keyword, retaining the namespace
@@ -342,7 +342,7 @@
     (cond (= \% (first c))
           (let [[f & args] (str/split (subs c 1) #"\.")
                 quoted-args (map #(format-entity (keyword %) opts) args)]
-            [(str (upper-case (str/replace f "-" "_"))
+            [(str (str/upper-case (str/replace f "-" "_"))
                   "(" (str/join ", " quoted-args) ")")])
           (= \? (first c))
           (let [k (keyword (subs c 1))]
@@ -1711,7 +1711,7 @@
               (into [(str "(" (str/join ", " sqls) ")")] params))))
 
         (boolean? expr)
-        [(upper-case (str expr))]
+        [(str/upper-case (str expr))]
 
         (nil? expr)
         ["NULL"]

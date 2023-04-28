@@ -1069,7 +1069,8 @@
   [k args]
   (generic-1 k args))
 
-#?(:clj
+#?(:cljs (comment "Only for non JavaScript hosts.") 
+   :default
    (do
      ;; #409 this assert is only valid when :doc metadata is not elided:
      (when (-> #'generic-helper-unary meta :doc)
